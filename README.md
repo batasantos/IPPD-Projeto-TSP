@@ -18,7 +18,7 @@ O código sequencial fornecido como ponto de partida utiliza uma abordagem de bu
 ## 3. Estratégia de Paralelização
 Nós decidimos utilizar a biblioteca **OpenMP** para este projeto. Como o ambiente alvo avalia o ganho de desempenho pela divisão do tempo sequencial pelo tempo paralelo, o OpenMP se mostrou a ferramenta mais prática para atuar em arquitetura de memória compartilhada, exigindo menos refatoração bruta do código original.
 
-Focamos nossa estratégia na "granulação", paralelizando o laço principal da função `main` para que cada *thread* assuma a busca a partir de uma cidade inicial diferente, explorando a árvore de forma simultânea. 
+Focamos nossa estratégia na granulação, paralelizando o laço principal da função `main` para que cada *thread* assuma a busca a partir de uma cidade inicial diferente, explorando a árvore de forma simultânea. 
 
 **Desafios e Soluções na Implementação:**
 * **Condição de Corrida (*Race Condition*) na Matriz de Visitas:** No código original, o vetor `ok` que marcava as cidades visitadas era global. Se apenas colocássemos a diretiva `#pragma omp parallel for`, todas as *threads* escreveriam no mesmo vetor simultaneamente, quebrando a corretude do resultado. A solução foi criar um vetor isolado (`local_ok`) dentro da região paralela para que cada *thread* tivesse seu próprio estado de memória.
