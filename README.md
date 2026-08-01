@@ -25,7 +25,33 @@ Focamos nossa estratégia na granulação, paralelizando o laço principal da fu
 * **Sincronização da Menor Rota:** A variável `D`, que guarda a menor distância global, precisa ser lida e atualizada por todas as *threads*. Para evitar que duas *threads* sobrescrevessem o valor ao mesmo tempo gerando inconsistências, colocamos a atualização final de `D` dentro de uma região de exclusão mútua com `#pragma omp critical`.
 * **Balanceamento de Carga:** Por causa do algoritmo de poda (*pruning*), algumas cidades terminam suas buscas muito antes de outras. Para que as *threads* não ficassem ociosas esperando as demais terminarem, adicionamos a cláusula `schedule(dynamic)`, fazendo com que *threads* livres puxem dinamicamente novas cidades da fila de iteração.
 
-## 4. Ambiente de Testes
+## 4. Instruções de Compilação e Execução
+
+Para testar o programa paralelizado localmente, siga os passos abaixo no terminal do seu ambiente Linux (ou WSL):
+
+### 1. Limpeza e Compilação
+Utilize o utilitário `make` configurado no projeto para limpar arquivos de compilações anteriores e gerar a nova versão do executável:
+
+```bash
+make clean
+make
+```
+
+### 2.
+Antes de rodar a versão com OpenMP, você precisa informar ao sistema operacional quantas threads o programa tem permissão para utilizar simultaneamente, sendo necessário exportar a variável de ambiente `OMP_NUM_THREADS`
+
+```bash
+export OMP_NUM_THREADS=4
+```
+
+### 3. Execução e Medição de Tempo
+Após definir o número de threads, execute o programa paralelizado junto com o comando time
+
+```bash
+time ./tsp_openmp
+```
+
+## 5. Ambiente de Testes
 Para a avaliação de desempenho e medição dos tempos de execução, os testes foram realizados localmente. Lembrando que a capacidade física do processador explica diretamente o limite do ganho de velocidade que conseguimos alcançar com as *threads*:
 
 * **Sistema Operacional:** Windows Subsystem for Linux (WSL)
@@ -33,7 +59,7 @@ Para a avaliação de desempenho e medição dos tempos de execução, os testes
 * **Memória RAM:** 8 GB
 * **Compilador:** GCC com flags de otimização `-O2` e `-fopenmp`
 
-## 5. Avaliação e Ganhos de Desempenho (Speedups)
+## 6. Avaliação e Ganhos de Desempenho (Speedups)
 Os testes foram realizados utilizando o arquivo de entrada com 15 cidades fornecido para o problema. Para as medições, utilizamos o comando `time` nativo do Linux, considerando o tempo real de CPU ("tempo de relógio").
 
 ![Capturas de tela do terminal mostrando a execução sequencial](TSP-Sequencial.png)
